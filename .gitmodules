@@ -1,0 +1,15 @@
+[submodule "Order"]
+	path = Order
+	url = https://github.com/Grupo-MACC/Order.git
+[submodule "Machine"]
+	path = Machine
+	url = https://github.com/Grupo-MACC/Machine.git
+[submodule "Payment"]
+	path = Payment
+	url = https://github.com/Grupo-MACC/Payment.git
+[submodule "Client"]
+	path = Client
+	url = https://github.com/Grupo-MACC/Client.git
+[submodule "Delivery"]
+	path = Delivery
+	url = https://github.com/Grupo-MACC/Delivery.git
