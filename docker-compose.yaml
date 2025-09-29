@@ -1,0 +1,46 @@
+services:
+  order:
+    build: 
+      context: Order
+      dockerfile: Dockerfile
+    container_name: order
+    ports:
+      - "5000:5000"
+    networks:
+      - n1
+    restart: "no"
+    volumes:
+      # Add volumes if needed for development
+      - ./Order/app_order:/home/pyuser/code/app_order
+
+  machine:
+    build: 
+      context: Machine
+      dockerfile: Dockerfile
+    container_name: machine
+    ports:
+      - "5001:5001"
+    networks:
+      - n1
+    restart: "no"
+    volumes:
+      # Add volumes if needed for development
+      - ./Machine/app_machine:/home/pyuser/code/app_machine
+    
+  api-gateway:
+    image: haproxy:2.9
+    container_name: api_gateway
+    ports:
+      - "80:80"
+      - "8404:8404"
+    networks:
+      - n1
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - order
+      - machine
+
+networks:
+  n1:
+    driver: bridge
