@@ -9,9 +9,8 @@ services:
     networks:
       - n1
     restart: "no"
-    volumes:
-      # Add volumes if needed for development
-      - ./Order/app_order:/home/pyuser/code/app_order
+    #volumes:
+    #  - ./Order/app_order:/home/pyuser/code/app_order
 
   machine:
     build: 
@@ -23,9 +22,34 @@ services:
     networks:
       - n1
     restart: "no"
-    volumes:
-      # Add volumes if needed for development
-      - ./Machine/app_machine:/home/pyuser/code/app_machine
+    #volumes:
+    #  - ./Machine/app_machine:/home/pyuser/code/app_machine
+
+  delivery:
+    build:
+      context: Delivery
+      dockerfile: Dockerfile
+    container_name: delivery
+    ports:
+      - "5002:5002"
+    networks:
+      - n1
+    restart: "no"
+    #volumes:
+    #  - ./Delivery/app_delivery:/home/pyuser/code/app_delivery
+  
+  payment:
+    build:
+      context: Payment
+      dockerfile: Dockerfile
+    container_name: payment
+    ports:
+      - "5003:5003"
+    networks:
+      - n1
+    restart: "no"
+    #volumes:
+    #  - ./Payment/app_payment:/home/pyuser/code/app_payment
     
   api-gateway:
     image: haproxy:2.9
@@ -40,6 +64,8 @@ services:
     depends_on:
       - order
       - machine
+      - delivery
+      - payment
 
 networks:
   n1:
