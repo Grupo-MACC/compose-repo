@@ -1,1 +1,0 @@
-Para iniciar una app de FastAPI --> python -m uvicorn main:app --reload --port 5000    -------      FastAPI no levanta ningún servicio, solo define la app. Para levantar el servicio necesita un servidor ASGI (Uvicorn, Hipercorn, Daphne).
