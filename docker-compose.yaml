@@ -1,4 +1,24 @@
 services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - n1
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   order:
     build: 
       context: Order
@@ -9,8 +29,13 @@ services:
     networks:
       - n1
     restart: "no"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy 
+
+    
     #volumes:
-    #  - ./Order/app_order:/home/pyuser/code/app_order
+    #  - ../Order/app_order:/home/pyuser/code/app_order
 
   machine:
     build: 
@@ -23,7 +48,7 @@ services:
       - n1
     restart: "no"
     #volumes:
-    #  - ./Machine/app_machine:/home/pyuser/code/app_machine
+    #  - ../Machine/app_machine:/home/pyuser/code/app_machine
 
   delivery:
     build:
@@ -36,7 +61,7 @@ services:
       - n1
     restart: "no"
     #volumes:
-    #  - ./Delivery/app_delivery:/home/pyuser/code/app_delivery
+    #  - ../Delivery/app_delivery:/home/pyuser/code/app_delivery
   
   payment:
     build:
@@ -48,9 +73,14 @@ services:
     networks:
       - n1
     restart: "no"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy 
     #volumes:
-    #  - ./Payment/app_payment:/home/pyuser/code/app_payment
-    
+    #  - ../Payment/app_payment:/home/pyuser/code/app_payment
+
+  # Servicio de RabbitMQ para mensajería entre microservicios
+
   api-gateway:
     image: haproxy:2.9
     container_name: api_gateway
