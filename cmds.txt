@@ -1,0 +1,16 @@
+Para iniciar una app de FastAPI --> python -m uvicorn main:app --reload --port 5000    -------      FastAPI no levanta ningún servicio, solo define la app. Para levantar el servicio necesita un servidor ASGI (Uvicorn, Hipercorn, Daphne).
+
+clonar el repositorio entero con todos los submodulos
+$ git clone --recurse-submodules https://github.com/Grupo-MACC/compose-repo.git
+
+Pull de todos los modulos
+$ git pull --recurse-submodules
+
+Hacer que compose repo apunte al ultimo commit
+$ git submodule update --remote
+
+Hacer cambios en los submodulos (push)
+- Asegurarse de estar editando el repo del servicio, 
+ya sea a traves de compose repo o en el repo del servicio directamente
+- Usar los dos comandos precedentes para llegar a la ultima version de commit del servicio
+- Hacer push en el compose (normalmente sera necesario para poner el compose y el repo al mismo nivel)
