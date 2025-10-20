@@ -18,6 +18,20 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+  
+  auth:
+    build:
+      context: auth
+      dockerfile: Dockerfile
+    container_name: auth
+    ports:
+      - "5004:5004"
+    networks:
+      - n1
+    restart: "no"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   order:
     build: 
@@ -78,8 +92,6 @@ services:
         condition: service_healthy 
     #volumes:
     #  - ../Payment/app_payment:/home/pyuser/code/app_payment
-
-  # Servicio de RabbitMQ para mensajería entre microservicios
 
   api-gateway:
     image: haproxy:2.9
