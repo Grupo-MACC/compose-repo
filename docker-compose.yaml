@@ -10,6 +10,9 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - ./certs:/certs:ro
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/conf.d/20-ssl.conf:ro
     networks:
       - n1
     healthcheck:
@@ -32,6 +35,10 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./certs/auth/auth-cert.pem:/certs/auth/auth-cert.pem:ro
+      - ./certs/auth/auth-key.pem:/certs/auth/auth-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro
 
   order:
     build: 
@@ -46,10 +53,10 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy 
-
-    
-    #volumes:
-    #  - ../Order/app_order:/home/pyuser/code/app_order
+    volumes:
+      - ./certs/order/order-cert.pem:/certs/order/order-cert.pem:ro
+      - ./certs/order/order-key.pem:/certs/order/order-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro 
 
   machine:
     build: 
@@ -61,8 +68,13 @@ services:
     networks:
       - n1
     restart: "no"
-    #volumes:
-    #  - ../Machine/app_machine:/home/pyuser/code/app_machine
+    depends_on:
+      rabbitmq:
+        condition: service_healthy 
+    volumes:
+      - ./certs/machine/machine-cert.pem:/certs/machine/machine-cert.pem:ro
+      - ./certs/machine/machine-key.pem:/certs/machine/machine-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro
 
   delivery:
     build:
@@ -74,8 +86,13 @@ services:
     networks:
       - n1
     restart: "no"
-    #volumes:
-    #  - ../Delivery/app_delivery:/home/pyuser/code/app_delivery
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./certs/delivery/delivery-cert.pem:/certs/delivery/delivery-cert.pem:ro
+      - ./certs/delivery/delivery-key.pem:/certs/delivery/delivery-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro
   
   payment:
     build:
@@ -89,25 +106,36 @@ services:
     restart: "no"
     depends_on:
       rabbitmq:
-        condition: service_healthy 
-    #volumes:
-    #  - ../Payment/app_payment:/home/pyuser/code/app_payment
+        condition: service_healthy
+    volumes:
+      - ./certs/payment/payment-cert.pem:/certs/payment/payment-cert.pem:ro
+      - ./certs/payment/payment-key.pem:/certs/payment/payment-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro
 
   api-gateway:
     image: haproxy:2.9
     container_name: api_gateway
     ports:
       - "80:80"
+      - "443:443"
       - "8404:8404"
     networks:
-      - n1
+      n1:
+        aliases:
+          - grupo2
+    extra_hosts:
+      - "grupo2:127.0.0.1"
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./certs/haproxy.pem:/usr/local/etc/haproxy/certs/haproxy.pem:ro
+      - ./certs/haproxy-client.pem:/usr/local/etc/haproxy/certs/haproxy-client.pem:ro
+      - ./certs/ca.pem:/usr/local/etc/haproxy/certs/ca.pem:ro
     depends_on:
       - order
       - machine
       - delivery
       - payment
+    restart: unless-stopped
 
 networks:
   n1:

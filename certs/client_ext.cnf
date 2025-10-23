@@ -1,0 +1,5 @@
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth
+# SAN no es crítico para cliente, pero no molesta:
+subjectAltName = DNS:api_gateway, DNS:localhost
