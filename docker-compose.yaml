@@ -47,6 +47,9 @@ services:
     networks:
       - n1
     restart: "no"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy 
     #volumes:
     #  - ../Machine/app_machine:/home/pyuser/code/app_machine
 
@@ -60,6 +63,9 @@ services:
     networks:
       - n1
     restart: "no"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy 
     #volumes:
     #  - ../Delivery/app_delivery:/home/pyuser/code/app_delivery
   
