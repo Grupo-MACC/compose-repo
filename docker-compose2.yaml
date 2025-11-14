@@ -136,50 +136,7 @@ services:
       - delivery
       - payment
     restart: unless-stopped
-  influxdb:
-    image: influxdb:2
-    container_name: influxdb
-    ports:
-      - "8086:8086"
-    networks:
-      - n1
-    volumes:
-      - influxdb-data:/var/lib/influxdb2
-    environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
-      - DOCKER_INFLUXDB_INIT_ORG=my-org
-      - DOCKER_INFLUXDB_INIT_BUCKET=factory_logs
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=MY_CUSTOM_TOKEN_123456
-      - DOCKER_INFLUXDB_INIT_BUCKETS=factory_errors,factory_monitoring,factory_debug,factory_logs
-  influxdb-init:  # ← NUEVO SERVICIO
-    image: influxdb:2
-    depends_on:
-      - influxdb
-    volumes:
-      - ./init-influxdb.sh:/init-influxdb.sh:ro
-    entrypoint: /init-influxdb.sh
-    environment:
-      - INFLUX_HOST=http://influxdb:8086
-      - INFLUX_ORG=my-org
-      - INFLUX_TOKEN=MY_CUSTOM_TOKEN_123456
-    networks:
-      - n1
-    restart: "no"
-  telegraf:
-    image: telegraf:latest
-    container_name: telegraf
-    networks:
-      - n1
-    volumes:
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
 
 networks:
   n1:
     driver: bridge
-volumes:
-  influxdb-data:
