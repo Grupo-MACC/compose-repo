@@ -178,6 +178,24 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  logs-api:
+    build:
+      context: ./logs-api
+      dockerfile: Dockerfile
+    container_name: logs-api
+    ports:
+      - "6000:6000"
+    networks:
+      - n1
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=MY_CUSTOM_TOKEN_123456
+      - INFLUXDB_ORG=my-org
+      - AUTH_SERVICE_URL=https://auth:5004
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
 networks:
   n1:
     driver: bridge
