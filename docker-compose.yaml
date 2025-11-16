@@ -193,8 +193,13 @@ services:
       - INFLUXDB_ORG=my-org
       - AUTH_SERVICE_URL=https://auth:5004
     depends_on:
-      - influxdb
+      rabbitmq:
+        condition: service_healthy
     restart: unless-stopped
+    volumes:
+      - ./certs/logs/logs-cert.pem:/certs/logs/logs-cert.pem:ro
+      - ./certs/logs/logs-key.pem:/certs/logs/logs-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro 
 
 networks:
   n1:

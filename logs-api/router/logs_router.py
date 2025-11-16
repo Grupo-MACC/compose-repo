@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.serialization import load_pem_public_key
 import jwt
 import os
 
-router = APIRouter(prefix="/logs", tags=["logs"])
+router = APIRouter(prefix="/logs/private", tags=["logs"])
 
 
 # ===========================
