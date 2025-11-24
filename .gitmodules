@@ -16,3 +16,9 @@
 [submodule "auth"]
 	path = auth
 	url = https://github.com/Grupo-MACC/auth.git
+[submodule "logger"]
+	path = logger
+	url = https://github.com/Grupo-MACC/logger.git
+[submodule "consul"]
+	path = consul
+	url = https://github.com/Grupo-MACC/consul.git
