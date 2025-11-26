@@ -1,5 +1,25 @@
 services:
 
+  consul:
+    image: consul:1.15
+    container_name: consul
+    hostname: consul
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0 -bind=0.0.0.0
+    networks:
+      - n1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "consul", "version"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -15,6 +35,9 @@ services:
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/conf.d/20-ssl.conf:ro
     networks:
       - n1
+    depends_on:
+      consul:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
@@ -32,8 +55,16 @@ services:
     networks:
       - n1
     restart: "no"
+    environment:
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=auth
+      - SERVICE_PORT=5004
+      - SERVICE_ID=auth-1
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      consul:
         condition: service_healthy
     volumes:
       - ./certs/auth/auth-cert.pem:/certs/auth/auth-cert.pem:ro
@@ -50,9 +81,17 @@ services:
     networks:
       - n1
     restart: "no"
+    environment:
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=order
+      - SERVICE_PORT=5000
+      - SERVICE_ID=order-1
     depends_on:
       rabbitmq:
-        condition: service_healthy 
+        condition: service_healthy
+      consul:
+        condition: service_healthy
     volumes:
       - ./certs/order/order-cert.pem:/certs/order/order-cert.pem:ro
       - ./certs/order/order-key.pem:/certs/order/order-key.pem:ro
@@ -68,9 +107,17 @@ services:
     networks:
       - n1
     restart: "no"
+    environment:
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=machine
+      - SERVICE_PORT=5001
+      - SERVICE_ID=machine-1
     depends_on:
       rabbitmq:
-        condition: service_healthy 
+        condition: service_healthy
+      consul:
+        condition: service_healthy
     volumes:
       - ./certs/machine/machine-cert.pem:/certs/machine/machine-cert.pem:ro
       - ./certs/machine/machine-key.pem:/certs/machine/machine-key.pem:ro
@@ -86,8 +133,16 @@ services:
     networks:
       - n1
     restart: "no"
+    environment:
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=delivery
+      - SERVICE_PORT=5002
+      - SERVICE_ID=delivery-1
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      consul:
         condition: service_healthy
     volumes:
       - ./certs/delivery/delivery-cert.pem:/certs/delivery/delivery-cert.pem:ro
@@ -104,8 +159,16 @@ services:
     networks:
       - n1
     restart: "no"
+    environment:
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=payment
+      - SERVICE_PORT=5003
+      - SERVICE_ID=payment-1
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      consul:
         condition: service_healthy
     volumes:
       - ./certs/payment/payment-cert.pem:/certs/payment/payment-cert.pem:ro
@@ -131,10 +194,16 @@ services:
       - ./certs/haproxy-client.pem:/usr/local/etc/haproxy/certs/haproxy-client.pem:ro
       - ./certs/ca.pem:/usr/local/etc/haproxy/certs/ca.pem:ro
     depends_on:
-      - order
-      - machine
-      - delivery
-      - payment
+      consul:
+        condition: service_healthy
+      order:
+        condition: service_started
+      machine:
+        condition: service_started
+      delivery:
+        condition: service_started
+      payment:
+        condition: service_started
     restart: unless-stopped
 
 networks:
