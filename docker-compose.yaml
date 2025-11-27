@@ -49,9 +49,7 @@ services:
     build:
       context: auth
       dockerfile: Dockerfile
-    container_name: auth
-    ports:
-      - "5004:5004"
+    # Sin container_name para permitir replicas
     networks:
       - n1
     restart: "no"
@@ -60,7 +58,6 @@ services:
       - CONSUL_PORT=8500
       - SERVICE_NAME=auth
       - SERVICE_PORT=5004
-      - SERVICE_ID=auth-1
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -70,6 +67,9 @@ services:
       - ./certs/auth/auth-cert.pem:/certs/auth/auth-cert.pem:ro
       - ./certs/auth/auth-key.pem:/certs/auth/auth-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro
+      - auth-keys:/home/pyuser/keys
+    deploy:
+      replicas: 4
 
   order:
     build: 
@@ -209,3 +209,6 @@ services:
 networks:
   n1:
     driver: bridge
+
+volumes:
+  auth-keys:
