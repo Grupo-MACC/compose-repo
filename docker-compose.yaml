@@ -1,5 +1,23 @@
 services:
 
+  auth-db:
+    image: postgres:15-alpine
+    container_name: auth-db
+    environment:
+      - POSTGRES_USER=auth_user
+      - POSTGRES_PASSWORD=auth_password
+      - POSTGRES_DB=auth_db
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - n1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   consul:
     image: consul:1.15
     container_name: consul
@@ -49,19 +67,21 @@ services:
     build:
       context: auth
       dockerfile: Dockerfile
-    # Sin container_name para permitir replicas
     networks:
       - n1
-    restart: "no"
+    restart: on-failure
     environment:
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
       - SERVICE_NAME=auth
       - SERVICE_PORT=5004
+      - SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@auth-db:5432/auth_db
     depends_on:
       rabbitmq:
         condition: service_healthy
       consul:
+        condition: service_healthy
+      auth-db:
         condition: service_healthy
     volumes:
       - ./certs/auth/auth-cert.pem:/certs/auth/auth-cert.pem:ro
@@ -206,9 +226,69 @@ services:
         condition: service_started
     restart: unless-stopped
 
+  influxdb:
+    image: influxdb:2
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    networks:
+      - n1
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
+      - DOCKER_INFLUXDB_INIT_ORG=my-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=factory_logs
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=MY_CUSTOM_TOKEN_123456
+      - DOCKER_INFLUXDB_INIT_BUCKETS=factory_errors,factory_monitoring,factory_debug,factory_logs
+
+  influxdb-init:
+    image: influxdb:2
+    depends_on:
+      - influxdb
+    volumes:
+      - ./init-influxdb.sh:/init-influxdb.sh:ro
+    entrypoint: /init-influxdb.sh
+    environment:
+      - INFLUX_HOST=http://influxdb:8086
+      - INFLUX_ORG=my-org
+      - INFLUX_TOKEN=MY_CUSTOM_TOKEN_123456
+    networks:
+      - n1
+    restart: "no"
+    
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    networks:
+      - n1
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  logger:
+    build:
+      context: ./logger
+      dockerfile: Dockerfile
+    container_name: logger
+    ports:
+      - "6000:6000"
+    networks:
+      - n1
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
 networks:
   n1:
     driver: bridge
-
+  
 volumes:
+  influxdb-data:
   auth-keys:
+  auth-db-data:
