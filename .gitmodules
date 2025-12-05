@@ -22,3 +22,6 @@
 [submodule "consul"]
 	path = consul
 	url = https://github.com/Grupo-MACC/consul.git
+[submodule "infrastructure"]
+	path = infrastructure
+	url = https://github.com/Grupo-MACC/infrastructure.git
