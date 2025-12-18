@@ -25,3 +25,6 @@
 [submodule "infrastructure"]
 	path = infrastructure
 	url = https://github.com/Grupo-MACC/infrastructure.git
+[submodule "Warehouse"]
+	path = Warehouse
+	url = https://github.com/Grupo-MACC/Warehouse.git
