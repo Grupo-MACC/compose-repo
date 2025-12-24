@@ -226,6 +226,32 @@ services:
         condition: service_started
     restart: unless-stopped
 
+  warehouse:
+    build:
+      context: Warehouse
+      dockerfile: Dockerfile
+    container_name: warehouse
+    ports:
+      - "5005:5005"
+    networks:
+      - n1
+    restart: "no"
+    environment:
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+      - SERVICE_NAME=warehouse
+      - SERVICE_PORT=5005
+      - SERVICE_ID=warehouse-1
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    volumes:
+      - ./certs/warehouse/warehouse-cert.pem:/certs/warehouse/warehouse-cert.pem:ro
+      - ./certs/warehouse/warehouse-key.pem:/certs/warehouse/warehouse-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro
+
   influxdb:
     image: influxdb:2
     container_name: influxdb
