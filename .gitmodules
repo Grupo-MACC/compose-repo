@@ -28,3 +28,6 @@
 [submodule "Warehouse"]
 	path = Warehouse
 	url = https://github.com/Grupo-MACC/Warehouse.git
+[submodule "rabbitmq"]
+	path = rabbitmq
+	url = https://github.com/Grupo-MACC/rabbitmq.git
