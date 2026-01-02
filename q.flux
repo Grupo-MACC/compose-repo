@@ -1,0 +1,5 @@
+from(bucket:"factory_debug")
+  |> range(start: -15m)
+  |> filter(fn:(r) => r._measurement == "logs")
+  |> filter(fn:(r) => r.service == "warehouse")
+  |> limit(n:50)
