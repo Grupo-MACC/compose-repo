@@ -1,5 +1,6 @@
 services:
 
+#region auth-db
   auth-db:
     image: postgres:15-alpine
     container_name: auth-db
@@ -18,6 +19,7 @@ services:
       retries: 5
       start_period: 10s
 
+#region consul
   consul:
     image: consul:1.15
     container_name: consul
@@ -38,6 +40,7 @@ services:
       retries: 5
       start_period: 10s
 
+#region rabbitmq
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -62,7 +65,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-  
+
+#region auth 
   auth:
     build:
       context: auth
@@ -91,6 +95,7 @@ services:
     deploy:
       replicas: 4
 
+#region order
   order:
     build: 
       context: Order
@@ -117,22 +122,47 @@ services:
       - ./certs/order/order-key.pem:/certs/order/order-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro 
 
-  machine:
+#region machine
+  machine-a:
     build: 
       context: Machine
       dockerfile: Dockerfile
-    container_name: machine
+    # container_name: machine
     ports:
       - "5001:5001"
     networks:
       - n1
     restart: "no"
     environment:
-      - CONSUL_HOST=consul
-      - CONSUL_PORT=8500
-      - SERVICE_NAME=machine
+      - SERVICE_NAME=machine-a
+      - SERVICE_ID=machine-a-1
       - SERVICE_PORT=5001
-      - SERVICE_ID=machine-1
+      - MACHINE_PIECE_TYPE=A
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
+    volumes:
+      - ./certs/machine/machine-cert.pem:/certs/machine/machine-cert.pem:ro
+      - ./certs/machine/machine-key.pem:/certs/machine/machine-key.pem:ro
+      - ./certs/ca.pem:/certs/ca.pem:ro
+  
+  machine-b:
+    build: 
+      context: Machine
+      dockerfile: Dockerfile
+    # container_name: machine
+    ports:
+      - "5006:5001"
+    networks:
+      - n1
+    restart: "no"
+    environment:
+      - SERVICE_NAME=machine-b
+      - SERVICE_ID=machine-b-1
+      - SERVICE_PORT=5001
+      - MACHINE_PIECE_TYPE=B
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -143,6 +173,7 @@ services:
       - ./certs/machine/machine-key.pem:/certs/machine/machine-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro
 
+#region delivery
   delivery:
     build:
       context: Delivery
@@ -168,7 +199,8 @@ services:
       - ./certs/delivery/delivery-cert.pem:/certs/delivery/delivery-cert.pem:ro
       - ./certs/delivery/delivery-key.pem:/certs/delivery/delivery-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro
-  
+
+#region payment  
   payment:
     build:
       context: Payment
@@ -195,6 +227,7 @@ services:
       - ./certs/payment/payment-key.pem:/certs/payment/payment-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro
 
+#region api-gateway
   api-gateway:
     image: haproxy:2.9
     container_name: api_gateway
@@ -218,7 +251,9 @@ services:
         condition: service_healthy
       order:
         condition: service_started
-      machine:
+      machine-a:
+        condition: service_started
+      machine-b:
         condition: service_started
       delivery:
         condition: service_started
@@ -226,6 +261,7 @@ services:
         condition: service_started
     restart: unless-stopped
 
+#region warehouse
   warehouse:
     build:
       context: Warehouse
@@ -252,6 +288,7 @@ services:
       - ./certs/warehouse/warehouse-key.pem:/certs/warehouse/warehouse-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro
 
+#region influxdb
   influxdb:
     image: influxdb:2
     container_name: influxdb
@@ -284,7 +321,8 @@ services:
     networks:
       - n1
     restart: "no"
-    
+
+#region telegraf  
   telegraf:
     image: telegraf:latest
     container_name: telegraf
@@ -296,6 +334,7 @@ services:
       rabbitmq:
         condition: service_healthy
 
+#region logger
   logger:
     build:
       context: ./logger
