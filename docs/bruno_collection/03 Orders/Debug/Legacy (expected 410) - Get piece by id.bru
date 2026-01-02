@@ -1,0 +1,20 @@
+meta {
+  name: Legacy (expected 410) - Get piece by id
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{orderURL}}/private/piece/{{piece_id}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 410
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

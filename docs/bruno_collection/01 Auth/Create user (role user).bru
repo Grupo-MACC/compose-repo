@@ -1,0 +1,39 @@
+meta {
+  name: Create user (role user)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{authURL}}/user
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_access_token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "username": "{{userUsername}}",
+    "password": "{{userPassword}}",
+    "role_id": {{userRoleId}}
+  }
+}
+
+vars:post-response {
+  user_id: res('id')
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: isNumber
+  res.body.username: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

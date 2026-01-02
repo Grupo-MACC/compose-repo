@@ -1,0 +1,21 @@
+meta {
+  name: Private - Get order by id
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{orderURL}}/private/order/{{order_id}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: isNumber
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

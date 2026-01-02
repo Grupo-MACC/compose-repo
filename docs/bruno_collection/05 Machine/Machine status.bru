@@ -1,0 +1,25 @@
+meta {
+  name: Machine status
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{machineURL}}/machine/status
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.status: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

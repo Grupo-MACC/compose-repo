@@ -1,0 +1,32 @@
+meta {
+  name: Set stock - B
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{warehouseURL}}/warehouse/stocks/set
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "piece_type": "B",
+    "quantity": {{whStockB}}
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.piece_type: eq "B"
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

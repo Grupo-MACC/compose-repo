@@ -1,0 +1,29 @@
+meta {
+  name: List processed pieces
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{machineURL}}/machine/pieces/processed
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+vars:post-response {
+  # Guarda el primer PK del histórico (manufactured_piece.id) si existe
+  machine_piece_pk: res.body?.[0]?.id
+}
+
+assert {
+  res.status: eq 200
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

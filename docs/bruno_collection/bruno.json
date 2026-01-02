@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "[PBL] Grupo2 - Microservicios",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Payment health
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{paymentURL}}/payment/health
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

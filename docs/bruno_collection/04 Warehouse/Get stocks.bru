@@ -1,0 +1,20 @@
+meta {
+  name: Get stocks
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{warehouseURL}}/warehouse/stocks
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

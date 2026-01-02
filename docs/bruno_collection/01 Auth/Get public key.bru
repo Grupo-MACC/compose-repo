@@ -1,0 +1,16 @@
+meta {
+  name: Get public key
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{authURL}}/auth/public-key
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
