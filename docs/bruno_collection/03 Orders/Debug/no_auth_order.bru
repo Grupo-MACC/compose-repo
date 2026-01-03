@@ -1,0 +1,32 @@
+meta {
+  name: Debug publish to warehouse (POST /order/test)
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{orderURL}}/order/test
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  "order_id": 777,
+  "lines": [
+    { "piece_type": "A", "quantity": 2 },
+    { "piece_type": "B", "quantity": 1 }
+  ]
+}
+
+assert {
+  res.status: eq 200
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

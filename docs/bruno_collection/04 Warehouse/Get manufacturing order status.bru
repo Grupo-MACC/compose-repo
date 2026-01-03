@@ -1,0 +1,21 @@
+meta {
+  name: Get manufacturing order status
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{warehouseURL}}/warehouse/orders/{{wh_order_id}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.order.finished: isBoolean
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

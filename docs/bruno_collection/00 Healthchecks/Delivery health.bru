@@ -1,0 +1,16 @@
+meta {
+  name: Delivery health
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{deliveryURL}}/delivery/health
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

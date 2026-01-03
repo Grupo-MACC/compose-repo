@@ -1,0 +1,35 @@
+meta {
+  name: Refresh access token
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{authURL}}/auth/refresh
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refresh_token_str": "{{refresh_token}}"
+  }
+}
+
+vars:post-response {
+  access_token: res('access_token')
+}
+
+assert {
+  res.status: eq 200
+  res.body.access_token: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,21 @@
+meta {
+  name: HAProxy stats (8404)
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8404/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: admin
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

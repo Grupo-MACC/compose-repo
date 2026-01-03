@@ -1,0 +1,40 @@
+meta {
+  name: Create order (A+B)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{orderURL}}/order
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "pieces_a": 1,
+    "pieces_b": 1,
+    "description": "Pedido de prueba A/B (Bruno)",
+    "address": "01"
+  }
+}
+
+vars:post-response {
+  order_id: res('order_id')
+}
+
+assert {
+  res.status: eq 201
+  res.body.order_id: isNumber
+  res.body.creation_status: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

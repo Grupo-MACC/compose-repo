@@ -1,0 +1,16 @@
+meta {
+  name: Warehouse health
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{warehouseURL}}/warehouse/health
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

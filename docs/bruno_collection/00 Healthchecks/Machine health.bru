@@ -1,0 +1,16 @@
+meta {
+  name: Machine health
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{machineURL}}/machine/health
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
