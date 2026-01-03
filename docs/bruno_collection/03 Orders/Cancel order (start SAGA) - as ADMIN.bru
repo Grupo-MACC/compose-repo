@@ -1,0 +1,32 @@
+meta {
+  name: Cancel order (start SAGA) - as ADMIN
+  type: http
+  seq: 51
+}
+
+post {
+  url: {{orderURL}}/order/{{order_id}}/cancel
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_access_token}}
+}
+
+vars:post-response {
+  cancel_saga_id: res('saga_id')
+  cancel_mfg_status: res('manufacturing_status')
+}
+
+assert {
+  res.status: eq 202
+  res.body.saga_id: isNotEmpty
+  res.body.order_id: isNumber
+  res.body.manufacturing_status: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
