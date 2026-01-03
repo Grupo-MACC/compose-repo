@@ -1,0 +1,20 @@
+meta {
+  name: Legacy (expected 410) - List pieces by status
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{orderURL}}/private/piece_status/Pending
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 410
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

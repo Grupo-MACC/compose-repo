@@ -1,0 +1,16 @@
+meta {
+  name: Auth health
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{authURL}}/auth/health
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

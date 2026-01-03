@@ -1,0 +1,32 @@
+meta {
+  name: Add stock - A (+delta)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{warehouseURL}}/warehouse/stocks/add
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "piece_type": "A",
+    "delta": 5
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.piece_type: eq "A"
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

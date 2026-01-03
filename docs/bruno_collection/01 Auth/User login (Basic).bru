@@ -1,0 +1,32 @@
+meta {
+  name: User login (Basic)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{authURL}}/auth/login
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{userUsername}}
+  password: {{userPassword}}
+}
+
+vars:post-response {
+  access_token: res('access_token')
+  refresh_token: res('refresh_token')
+}
+
+assert {
+  res.status: eq 200
+  res.body.access_token: isNotEmpty
+  res.body.refresh_token: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

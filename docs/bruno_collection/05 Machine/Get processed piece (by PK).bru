@@ -1,0 +1,24 @@
+meta {
+  name: Get processed piece (by PK)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{machineURL}}/machine/pieces/processed/{{machine_piece_pk}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

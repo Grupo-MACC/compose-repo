@@ -1,0 +1,39 @@
+meta {
+  name: Ingest order (simulate)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{warehouseURL}}/warehouse/orders
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "order_id": {{whOrderId}},
+    "lines": [
+      {"piece_type": "A", "quantity": {{whQtyA}}},
+      {"piece_type": "B", "quantity": {{whQtyB}}}
+    ]
+  }
+}
+
+vars:post-response {
+  wh_order_id: res.body.order.id
+}
+
+assert {
+  res.status: eq 200
+  res.body.order.id: isNumber
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

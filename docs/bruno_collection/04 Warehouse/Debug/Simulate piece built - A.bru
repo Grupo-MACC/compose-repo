@@ -1,0 +1,31 @@
+meta {
+  name: Simulate piece built - A
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{warehouseURL}}/warehouse/pieces/built
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "order_id": {{wh_order_id}},
+    "piece_type": "A"
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

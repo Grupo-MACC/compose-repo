@@ -1,0 +1,16 @@
+meta {
+  name: Order health
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{orderURL}}/order/health
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
