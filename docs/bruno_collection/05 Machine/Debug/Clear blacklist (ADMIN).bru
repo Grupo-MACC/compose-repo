@@ -1,0 +1,25 @@
+meta {
+  name: Clear blacklist (ADMIN)
+  type: http
+  seq: 90
+}
+
+delete {
+  url: {{machineURL}}/machine/blacklist
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_access_token}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.detail: isNotEmpty
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

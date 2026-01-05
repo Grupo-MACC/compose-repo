@@ -1,0 +1,30 @@
+meta {
+  name: List blacklist (ADMIN)
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{machineURL}}/machine/blacklist?limit=5000&offset=0
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_access_token}}
+}
+
+vars:post-response {
+  blacklisted_order_ids: res.body?.order_ids
+  blacklist_total: res.body?.total
+}
+
+assert {
+  res.status: eq 200
+  res.body.total: isNumber
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
