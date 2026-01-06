@@ -31,3 +31,6 @@
 [submodule "rabbitmq"]
 	path = rabbitmq
 	url = https://github.com/Grupo-MACC/rabbitmq.git
+[submodule "logs-infrastructure"]
+	path = logs-infrastructure
+	url = https://github.com/Grupo-MACC/logs-infrastructure.git
