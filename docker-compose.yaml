@@ -305,7 +305,7 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=my-org
       - DOCKER_INFLUXDB_INIT_BUCKET=factory_logs
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=MY_CUSTOM_TOKEN_123456
-      - DOCKER_INFLUXDB_INIT_BUCKETS=factory_errors,factory_monitoring,factory_debug,factory_logs
+      - DOCKER_INFLUXDB_INIT_BUCKETS=factory_errors,factory_monitoring,factory_debug,factory_logs,factory_infra
 
   influxdb-init:
     image: influxdb:2
@@ -313,7 +313,7 @@ services:
       - influxdb
     volumes:
       - ./init-influxdb.sh:/init-influxdb.sh:ro
-    entrypoint: /init-influxdb.sh
+    entrypoint: ["/bin/bash", "/init-influxdb.sh"]
     environment:
       - INFLUX_HOST=http://influxdb:8086
       - INFLUX_ORG=my-org
@@ -333,6 +333,12 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      consul:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+      api-gateway:
+        condition: service_started
 
 #region logger
   logger:
