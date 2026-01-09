@@ -138,10 +138,13 @@ services:
       - SERVICE_ID=machine-a-1
       - SERVICE_PORT=5001
       - MACHINE_PIECE_TYPE=A
+      - BLACKLIST_DATABASE_URL=postgresql+asyncpg://blacklist:blacklist@blacklist-db:5432/blacklist
     depends_on:
       rabbitmq:
         condition: service_healthy
       consul:
+        condition: service_healthy
+      blacklist-db:
         condition: service_healthy
     volumes:
       - ./certs/machine/machine-cert.pem:/certs/machine/machine-cert.pem:ro
@@ -163,15 +166,43 @@ services:
       - SERVICE_ID=machine-b-1
       - SERVICE_PORT=5001
       - MACHINE_PIECE_TYPE=B
+      - BLACKLIST_DATABASE_URL=postgresql+asyncpg://blacklist:blacklist@blacklist-db:5432/blacklist
     depends_on:
       rabbitmq:
         condition: service_healthy
       consul:
         condition: service_healthy
+      blacklist-db:
+        condition: service_healthy
     volumes:
       - ./certs/machine/machine-cert.pem:/certs/machine/machine-cert.pem:ro
       - ./certs/machine/machine-key.pem:/certs/machine/machine-key.pem:ro
       - ./certs/ca.pem:/certs/ca.pem:ro
+
+#region blacklist-db
+  blacklist-db:
+    # BD ligera local para simular Aurora/RDS (PostgreSQL).
+    image: postgres:15-alpine
+    container_name: blacklist-db
+    environment:
+      # Credenciales simples para entorno local.
+      - POSTGRES_USER=blacklist
+      - POSTGRES_PASSWORD=blacklist
+      - POSTGRES_DB=blacklist
+    volumes:
+      # Persistencia (si reinicias, no pierdes la blacklist).
+      - blacklist-db-data:/var/lib/postgresql/data
+    networks:
+      - n1
+    healthcheck:
+      # Healthcheck estándar de Postgres.
+      test: ["CMD-SHELL", "pg_isready -U blacklist -d blacklist"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+#endregion
+
 
 #region delivery
   delivery:
@@ -357,3 +388,4 @@ volumes:
   influxdb-data:
   auth-keys:
   auth-db-data:
+  blacklist-db-data:

@@ -1,0 +1,24 @@
+meta {
+  name: Delete blacklist entry (ADMIN)
+  type: http
+  seq: 91
+}
+
+delete {
+  url: {{machineURL}}/machine/blacklist/{{order_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{admin_access_token}}
+}
+
+assert {
+  res.status: in 200,404
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
