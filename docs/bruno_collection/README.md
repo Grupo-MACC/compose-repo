@@ -29,7 +29,7 @@ Esta colección está preparada para probar el *compose* del repositorio que me 
    - `View order by id` / `List orders` para inspeccionar.
 5. **04 Warehouse** (pruebas del microservicio aislado):
    - `Set stock` / `Add stock`.
-   - `Ingest order` y luego `Get manufacturing order status`.
+   - `Ingest order` y luego `Get fabrication order status`.
    - `Simulate piece built` para marcar piezas como fabricadas.
 
 ## Variables importantes
