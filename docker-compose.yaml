@@ -46,6 +46,7 @@ services:
     container_name: rabbitmq
     hostname: rabbitmq
     ports:
+      - "5671:5671"
       - "5672:5672"
       - "15672:15672"
     environment:
@@ -80,6 +81,9 @@ services:
       - SERVICE_NAME=auth
       - SERVICE_PORT=5004
       - SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@auth-db:5432/auth_db
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -112,6 +116,9 @@ services:
       - SERVICE_NAME=order
       - SERVICE_PORT=5000
       - SERVICE_ID=order-1
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -139,6 +146,9 @@ services:
       - SERVICE_PORT=5001
       - MACHINE_PIECE_TYPE=A
       - BLACKLIST_DATABASE_URL=postgresql+asyncpg://blacklist:blacklist@blacklist-db:5432/blacklist
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -167,6 +177,9 @@ services:
       - SERVICE_PORT=5001
       - MACHINE_PIECE_TYPE=B
       - BLACKLIST_DATABASE_URL=postgresql+asyncpg://blacklist:blacklist@blacklist-db:5432/blacklist
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -221,6 +234,9 @@ services:
       - SERVICE_NAME=delivery
       - SERVICE_PORT=5002
       - SERVICE_ID=delivery-1
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -248,6 +264,9 @@ services:
       - SERVICE_NAME=payment
       - SERVICE_PORT=5003
       - SERVICE_ID=payment-1
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -309,6 +328,9 @@ services:
       - SERVICE_NAME=warehouse
       - SERVICE_PORT=5005
       - SERVICE_ID=warehouse-1
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
     depends_on:
       rabbitmq:
         condition: service_healthy
