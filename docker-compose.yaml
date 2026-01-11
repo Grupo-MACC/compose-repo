@@ -401,6 +401,15 @@ services:
       rabbitmq:
         condition: service_healthy
     restart: unless-stopped
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_USE_TLS=1
+      - RABBITMQ_PORT=5671
+      - RABBITMQ_TLS_CA_FILE=/certs/ca.pem
+    volumes:
+      - ./certs/ca.pem:/certs/ca.pem:ro
 
 networks:
   n1:
