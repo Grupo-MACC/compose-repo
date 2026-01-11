@@ -16,14 +16,14 @@ headers {
 
 vars:post-response {
   cancel_saga_id: res('saga_id')
-  cancel_mfg_status: res('manufacturing_status')
+  cancel_fabrication_status: res('fabrication_status')
 }
 
 assert {
   res.status: eq 202
   res.body.saga_id: isNotEmpty
   res.body.order_id: isNumber
-  res.body.manufacturing_status: isNotEmpty
+  res.body.fabrication_status: isNotEmpty
 }
 
 settings {
