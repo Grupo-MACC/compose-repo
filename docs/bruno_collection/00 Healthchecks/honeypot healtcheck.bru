@@ -1,0 +1,16 @@
+meta {
+  name: honeypot healtcheck
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{gatewayURL}}/honeypot/docs
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -380,6 +380,29 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+#region honeypot
+  honeypot:
+    build:
+      context: ./Honeypot
+      dockerfile: Dockerfile
+    container_name: honeypot
+    environment:
+      - SERVICE_ID=honeypot-1
+      - SERVICE_NAME=honeypot
+      - SERVICE_PORT=5010
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+    ports:
+      - "5010:5010"
+    networks:
+      - n1
+    depends_on:
+      consul:
+        condition: service_healthy
+    volumes:
+    - ./certs/honeypot/honeypot-cert.pem:/certs/honeypot/honeypot-cert.pem:ro
+    - ./certs/honeypot/honeypot-key.pem:/certs/honeypot/honeypot-key.pem:ro
+    - ./certs/ca.pem:/certs/ca.pem:ro
 networks:
   n1:
     driver: bridge
