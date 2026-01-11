@@ -1,0 +1,20 @@
+meta {
+  name: send jwt copy
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{gatewayURL}}/honeypot/1
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
