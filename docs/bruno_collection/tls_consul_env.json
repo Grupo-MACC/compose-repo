@@ -1,0 +1,44 @@
+{
+  "name": "tls_consul",
+  "variables": [
+    {"name": "gatewayURL", "value": "https://localhost", "enabled": true},
+
+    {"name": "authURL", "value": "{{gatewayURL}}", "enabled": true},
+    {"name": "orderURL", "value": "{{gatewayURL}}", "enabled": true},
+    {"name": "paymentURL", "value": "{{gatewayURL}}", "enabled": true},
+    {"name": "warehouseURL", "value": "{{gatewayURL}}", "enabled": true},
+    {"name": "machineURL", "value": "{{gatewayURL}}", "enabled": true},
+    {"name": "deliveryURL", "value": "{{gatewayURL}}", "enabled": true},
+
+    {"name": "adminUsername", "value": "admin", "enabled": true},
+    {"name": "adminPassword", "value": "adminpass", "enabled": true},
+
+    {"name": "userUsername", "value": "bruno_user", "enabled": true},
+    {"name": "userPassword", "value": "bruno_pass", "enabled": true},
+    {"name": "userRoleId", "value": "2", "enabled": true},
+
+    {"name": "topUpAmount", "value": "50000", "enabled": true},
+
+    {"name": "orderPiecesA", "value": "4", "enabled": true},
+    {"name": "orderPiecesB", "value": "5", "enabled": true},
+    {"name": "orderAddress", "value": "Calle Falsa 123, Madrid", "enabled": true},
+    {"name": "orderDescription", "value": "Pedido de prueba desde Bruno", "enabled": true},
+
+    {"name": "machine_piece_pk", "value": "1", "enabled": true},
+    {"name": "inflight_piece_id", "value": "piece-1", "enabled": true},
+
+    {"name": "whOrderId", "value": "1001", "enabled": true},
+    {"name": "whQtyA", "value": "2", "enabled": true},
+    {"name": "whQtyB", "value": "1", "enabled": true},
+    {"name": "whStockA", "value": "10", "enabled": true},
+    {"name": "whStockB", "value": "10", "enabled": true},
+
+    {"name": "admin_access_token", "value": "", "enabled": true},
+    {"name": "admin_refresh_token", "value": "", "enabled": true},
+    {"name": "access_token", "value": "", "enabled": true},
+    {"name": "refresh_token", "value": "", "enabled": true},
+    {"name": "order_id", "value": "", "enabled": true},
+    {"name": "wh_order_id", "value": "", "enabled": true},
+    {"name": "piece_id", "value": "", "enabled": true}
+  ]
+}

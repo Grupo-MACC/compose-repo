@@ -1,13 +1,13 @@
 vars {
-  # NOTA TLS: los microservicios exponen HTTPS (Uvicorn con cert/key).
-  # Si tu CA es local/self-signed, Bruno debe confiar en esa CA (recomendado)
-  # o desactivar verificación SSL por entorno.
-  authURL: https://localhost:5004
-  orderURL: https://localhost:5000
-  machineURL: https://localhost:5001
-  deliveryURL: https://localhost:5002
-  paymentURL: https://localhost:5003
-  warehouseURL: https://localhost:5005
+  gatewayURL: https://localhost
+  authURL: {{gatewayURL}}
+  orderURL: {{gatewayURL}}
+  machineURL: {{gatewayURL}}
+  deliveryURL: {{gatewayURL}}
+  paymentURL: {{gatewayURL}}
+  # Warehouse no está enrutado por HAProxy en tu haproxy.cfg (no existe /warehouse),
+  # por eso se llama por puerto directo. Variante legacy: si Warehouse sigue en HTTP, usa este entorno.
+  warehouseURL: http://localhost:5005
 
   adminUsername: admin
   adminPassword: adminpass
@@ -18,11 +18,16 @@ vars {
 
   topUpAmount: 50000
 
+  orderPieces: 2
+
   # Orders (A/B)
   orderPiecesA: 4
   orderPiecesB: 5
   orderAddress: "Calle Falsa 123, Madrid"
   orderDescription: "Pedido de prueba desde Bruno"
+
+  pieceStatus: "Queued"
+  pieceNewStatus: "Manufactured"
 
   machine_piece_pk: 1
   inflight_piece_id: "piece-1"
@@ -30,6 +35,7 @@ vars {
   whOrderId: 1001
   whQtyA: 2
   whQtyB: 1
+
   whStockA: 10
   whStockB: 10
 

@@ -1,48 +1,31 @@
-# Colección Bruno - PBL Grupo2 (microservicios)
+# [PBL] Grupo2 - Microservicios (TLS + Gateway)
 
-Esta colección está preparada para probar el *compose* del repositorio que me has pasado.
+## Importar y seleccionar entorno
 
-## Cómo usarla
+1) En Bruno (app) -> **Import** -> selecciona el `.zip`.
+2) Arriba a la derecha, en el desplegable **Environment**, selecciona uno de estos:
 
-1. Abre **Bruno** → **Import** → selecciona la carpeta de esta colección.
-2. Elige un entorno en **Environments**:
-   - **Docker Compose (Gateway + Warehouse direct)** (recomendado):
-     - Usa el **API Gateway (HAProxy)** para `auth`, `order`, `machine`, `delivery`, `payment`.
-     - Usa **puerto directo** para `warehouse` (porque en tu `haproxy.cfg` no existe ruta `/warehouse`).
-   - **Direct Ports (sin Gateway)**: útil si algún día expones `auth` en host (por defecto en tu compose NO está expuesto).
-3. Si vas a usar el Gateway por HTTPS con certificados locales:
-   - En Bruno: **Settings → General → desactiva “SSL/TLS Certificate Verification”**.
-   - Si ejecutas por CLI: usa `bru run --insecure`.
+- **tls-gateway** (recomendado): usa el **API Gateway (HAProxy)** para todos los micros, incluido Warehouse.
+- **tls-direct-ports**: llama a cada microservicio por su puerto (`https://localhost:500x`).
 
-## Flujo recomendado (para simular acciones de usuario)
+(Se mantienen entornos legacy `*-http*` por compatibilidad, pero para TLS usa los `tls-*`).
 
-1. **00 Healthchecks**: comprueba que todo responde.
-2. **01 Auth**:
-   - `Admin login` (tokens admin se guardan en variables `admin_access_token` / `admin_refresh_token`).
-   - `Create user (role user)` (crea un usuario normal con `role_id=2`).
-   - `User login` (tokens del usuario se guardan en `access_token` / `refresh_token`).
-3. **02 Payment**:
-   - `Top up wallet` para meter saldo al usuario.
-   - `View wallet` para comprobarlo.
-4. **03 Orders**:
-   - `Create order` crea un pedido y guarda `order_id`.
-   - `View order by id` / `List orders` para inspeccionar.
-5. **04 Warehouse** (pruebas del microservicio aislado):
-   - `Set stock` / `Add stock`.
-   - `Ingest order` y luego `Get fabrication order status`.
-   - `Simulate piece built` para marcar piezas como fabricadas.
+## Variables cómodas (sin tocar los .bru)
 
-## Variables importantes
+Cambia desde el Environment:
+- `orderPiecesA`, `orderPiecesB`, `orderAddress`, `orderDescription`
+- `topUpAmount`
+- credenciales (`adminUsername`, `adminPassword`, `userUsername`, ...)
 
-En el entorno recomendado puedes cambiar:
-- `adminUsername`, `adminPassword` (por defecto `admin` / `adminpass`, según tu `auth/app_auth/core/config.py`).
-- `userUsername`, `userPassword` (usuario de pruebas a crear).
-- `orderPieces`, `orderAddress`, `orderDescription`.
-- `topUpAmount`.
-- `whOrderId` y cantidades para Warehouse (en los bodies de las requests).
+La request **Create order (A+B)** usa esas variables directamente.
 
-## Notas técnicas (para que no te explote nada “porque sí”)
+## TLS / Certificados (Bruno)
 
-- **Auth no está publicado en host** en tu `docker-compose.yaml` (no tiene `ports:`), así que **desde Bruno solo lo puedes llamar vía Gateway**.
-- **Warehouse** sí está publicado en `5005:5005`, pero **no está enrutado por HAProxy**, por eso aquí lo llamo directo.
-- Si el Gateway te da errores de certificado: desactiva la verificación SSL/TLS en Bruno (o añade tu CA/cert en Bruno si prefieres hacerlo “bien”).
+Si Bruno muestra error de certificado (CA propia / self-signed), lo correcto es instalar tu `ca.pem` en el almacén de CAs del sistema y reiniciar Bruno.
+
+En Debian/Ubuntu:
+
+```bash
+sudo cp ./certs/ca.pem /usr/local/share/ca-certificates/pbl-grupo2-ca.crt
+sudo update-ca-certificates
+```

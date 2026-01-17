@@ -17,10 +17,10 @@ headers {
 
 body:json {
   {
-    "pieces_a": 4,
-    "pieces_b": 5,
-    "description": "Pedido de prueba A/B (Bruno)",
-    "address": "01"
+    "pieces_a": {{orderPiecesA}},
+    "pieces_b": {{orderPiecesB}},
+    "description": "{{orderDescription}}",
+    "address": "{{orderAddress}}"
   }
 }
 
