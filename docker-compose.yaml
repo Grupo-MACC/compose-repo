@@ -296,7 +296,7 @@ services:
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - ./certs/haproxy.pem:/usr/local/etc/haproxy/certs/haproxy.pem:ro
-      - ./certs/haproxy-client.pem:/usr/local/etc/haproxy/certs/haproxy-client.pem:ro
+      # - ./certs/haproxy-client.pem:/usr/local/etc/haproxy/certs/haproxy-client.pem:ro
       - ./certs/ca.pem:/usr/local/etc/haproxy/certs/ca.pem:ro
     depends_on:
       consul:
