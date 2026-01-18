@@ -151,15 +151,12 @@ services:
     build: 
       context: Machine
       dockerfile: Dockerfile
-    # container_name: machine
-    ports:
-      - "5001:5001"
-    networks:
-      - n1
+    expose:
+    - "5001"
+    networks: [n1]
     restart: "no"
     environment:
       - SERVICE_NAME=machine-a
-      - SERVICE_ID=machine-a-1
       - SERVICE_PORT=5001
       - MACHINE_PIECE_TYPE=A
       - BLACKLIST_DATABASE_URL=postgresql+asyncpg://blacklist:blacklist@blacklist-db:5432/blacklist
@@ -182,15 +179,12 @@ services:
     build: 
       context: Machine
       dockerfile: Dockerfile
-    # container_name: machine
-    ports:
-      - "5006:5001"
-    networks:
-      - n1
+    expose:
+    - "5001"
+    networks: [n1]
     restart: "no"
     environment:
       - SERVICE_NAME=machine-b
-      - SERVICE_ID=machine-b-1
       - SERVICE_PORT=5001
       - MACHINE_PIECE_TYPE=B
       - BLACKLIST_DATABASE_URL=postgresql+asyncpg://blacklist:blacklist@blacklist-db:5432/blacklist
