@@ -21,24 +21,37 @@ services:
 
 #region consul
   consul:
-    image: consul:1.15
+    build:
+      context: .
+      dockerfile: consul/Dockerfile
+    image: consul-tls:1.15
     container_name: consul
     hostname: consul
     ports:
-      - "8500:8500"
+      - "8501:8501"
       - "8600:8600/udp"
-    environment:
-      - CONSUL_BIND_INTERFACE=eth0
-    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0 -bind=0.0.0.0
+
+    # 🔥 Clave: evitamos el docker-entrypoint.sh que usa su-exec (y te falla setgroups)
+    entrypoint: ["consul"]
+    command: ["agent", "-config-file=/consul/config/consul.hcl"]
+
+    volumes:
+      - ./consul/consul.hcl:/consul/config/consul.hcl:ro
+      - ./certs/ca.pem:/consul/certs/ca.pem:ro
+      - ./certs/consul/consul-cert.pem:/consul/certs/consul-cert.pem:ro
+      - ./certs/consul/consul-key.pem:/consul/certs/consul-key.pem:ro
+
     networks:
       - n1
     restart: unless-stopped
+
     healthcheck:
-      test: ["CMD", "consul", "version"]
+      test: ["CMD-SHELL", "CONSUL_HTTP_ADDR=https://127.0.0.1:8501 CONSUL_CACERT=/consul/certs/ca.pem consul info >/dev/null 2>&1"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 10s
+
 
 #region rabbitmq
   rabbitmq:
@@ -77,7 +90,9 @@ services:
     restart: on-failure
     environment:
       - CONSUL_HOST=consul
-      - CONSUL_PORT=8500
+      - CONSUL_PORT=8501
+      - CONSUL_SCHEME=https
+      - CONSUL_CA_FILE=/certs/ca.pem
       - SERVICE_NAME=auth
       - SERVICE_PORT=5004
       - SQLALCHEMY_DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@auth-db:5432/auth_db
@@ -112,7 +127,9 @@ services:
     restart: "no"
     environment:
       - CONSUL_HOST=consul
-      - CONSUL_PORT=8500
+      - CONSUL_PORT=8501
+      - CONSUL_SCHEME=https
+      - CONSUL_CA_FILE=/certs/ca.pem
       - SERVICE_NAME=order
       - SERVICE_PORT=5000
       - SERVICE_ID=order-1
@@ -230,7 +247,9 @@ services:
     restart: "no"
     environment:
       - CONSUL_HOST=consul
-      - CONSUL_PORT=8500
+      - CONSUL_PORT=8501
+      - CONSUL_SCHEME=https
+      - CONSUL_CA_FILE=/certs/ca.pem
       - SERVICE_NAME=delivery
       - SERVICE_PORT=5002
       - SERVICE_ID=delivery-1
@@ -260,7 +279,9 @@ services:
     restart: "no"
     environment:
       - CONSUL_HOST=consul
-      - CONSUL_PORT=8500
+      - CONSUL_PORT=8501
+      - CONSUL_SCHEME=https
+      - CONSUL_CA_FILE=/certs/ca.pem
       - SERVICE_NAME=payment
       - SERVICE_PORT=5003
       - SERVICE_ID=payment-1
@@ -294,7 +315,7 @@ services:
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - ./certs/haproxy.pem:/usr/local/etc/haproxy/certs/haproxy.pem:ro
-      - ./certs/haproxy-client.pem:/usr/local/etc/haproxy/certs/haproxy-client.pem:ro
+      # - ./certs/haproxy-client.pem:/usr/local/etc/haproxy/certs/haproxy-client.pem:ro
       - ./certs/ca.pem:/usr/local/etc/haproxy/certs/ca.pem:ro
     depends_on:
       consul:
@@ -324,7 +345,9 @@ services:
     restart: "no"
     environment:
       - CONSUL_HOST=consul
-      - CONSUL_PORT=8500
+      - CONSUL_PORT=8501
+      - CONSUL_SCHEME=https
+      - CONSUL_CA_FILE=/certs/ca.pem
       - SERVICE_NAME=warehouse
       - SERVICE_PORT=5005
       - SERVICE_ID=warehouse-1
