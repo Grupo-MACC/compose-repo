@@ -1,10 +1,11 @@
 vars {
-  # NOTA TLS: los microservicios exponen HTTPS (Uvicorn con cert/key).
-  # Si tu CA es local/self-signed, Bruno debe confiar en esa CA (recomendado)
-  # o desactivar verificación SSL por entorno.
   authURL: https://localhost:5004
   orderURL: https://localhost:5000
-  machineURL: https://localhost:5001
+
+  machineAURL: https://localhost:5001
+  machineBURL: https://localhost:5006
+  machineURL: {{machineAURL}}
+
   deliveryURL: https://localhost:5002
   paymentURL: https://localhost:5003
   warehouseURL: https://localhost:5005
@@ -18,11 +19,12 @@ vars {
 
   topUpAmount: 50000
 
-  # Orders (A/B)
-  orderPiecesA: 4
-  orderPiecesB: 5
+  orderPieces: 2
   orderAddress: "Calle Falsa 123, Madrid"
   orderDescription: "Pedido de prueba desde Bruno"
+
+  pieceStatus: "Queued"
+  pieceNewStatus: "Manufactured"
 
   machine_piece_pk: 1
   inflight_piece_id: "piece-1"
@@ -30,6 +32,7 @@ vars {
   whOrderId: 1001
   whQtyA: 2
   whQtyB: 1
+
   whStockA: 10
   whStockB: 10
 

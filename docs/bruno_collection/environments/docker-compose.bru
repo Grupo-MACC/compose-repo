@@ -1,16 +1,12 @@
 vars {
-  # Gateway HTTPS (HAProxy)
   gatewayURL: https://localhost
-
-  # Todos los microservicios se llaman vía Gateway (incluye Warehouse)
   authURL: {{gatewayURL}}
   orderURL: {{gatewayURL}}
-  paymentURL: {{gatewayURL}}
-  warehouseURL: {{gatewayURL}}
   machineURL: {{gatewayURL}}
   deliveryURL: {{gatewayURL}}
+  paymentURL: {{gatewayURL}}
+  warehouseURL: {{gatewayURL}}
 
-  # Credenciales por defecto
   adminUsername: admin
   adminPassword: adminpass
 
@@ -18,27 +14,25 @@ vars {
   userPassword: bruno_pass
   userRoleId: 2
 
-  # Payment
   topUpAmount: 50000
 
-  # Orders (A/B) - cambia esto desde Bruno sin tocar los .bru
-  orderPiecesA: 4
-  orderPiecesB: 5
+  orderPieces: 2
   orderAddress: "Calle Falsa 123, Madrid"
   orderDescription: "Pedido de prueba desde Bruno"
 
-  # Machine / piezas (debug)
+  pieceStatus: "Queued"
+  pieceNewStatus: "Manufactured"
+
   machine_piece_pk: 1
   inflight_piece_id: "piece-1"
 
-  # Warehouse (debug)
   whOrderId: 1001
   whQtyA: 2
   whQtyB: 1
+
   whStockA: 10
   whStockB: 10
 
-  # Tokens / ids runtime
   admin_access_token: ""
   admin_refresh_token: ""
   access_token: ""
