@@ -1,0 +1,44 @@
+vars {
+  // Replace <api-id> with your actual API Gateway ID
+  gatewayURL: https://<api-id>.execute-api.us-east-1.amazonaws.com/prod
+  authURL: {{gatewayURL}}
+  orderURL: {{gatewayURL}}
+  machineURL: {{gatewayURL}}
+  deliveryURL: {{gatewayURL}}
+  paymentURL: {{gatewayURL}}
+  warehouseURL: {{gatewayURL}}
+
+  adminUsername: admin
+  adminPassword: adminpass
+
+  userUsername: bruno_user
+  userPassword: bruno_pass
+  userRoleId: 2
+
+  topUpAmount: 50000
+
+  orderPieces: 2
+  orderAddress: "Calle Falsa 123, Madrid"
+  orderDescription: "Pedido de prueba desde Bruno"
+
+  pieceStatus: "Queued"
+  pieceNewStatus: "Manufactured"
+
+  machine_piece_pk: 1
+  inflight_piece_id: "piece-1"
+
+  whOrderId: 1001
+  whQtyA: 2
+  whQtyB: 1
+
+  whStockA: 10
+  whStockB: 10
+
+  admin_access_token: ""
+  admin_refresh_token: ""
+  access_token: ""
+  refresh_token: ""
+  order_id: ""
+  wh_order_id: ""
+  piece_id: ""
+}
